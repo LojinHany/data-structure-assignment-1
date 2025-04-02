@@ -69,7 +69,34 @@ public:
 
     void bubble();
 
-    void shell();
+    void shell() {
+        for (int gap = size / 2; gap >= 1; gap /= 2) {
+            cout << "\nCurrent gap: " << gap << endl;
+            for (int j = gap; j < size; j++) {
+                for (int i = j - gap; i >= 0; i -= gap) {
+                    cout << "Comparing data[" << i << "] = " << data[i]
+                         << " and data[" << i + gap << "] = " << data[i + gap] << endl;
+
+                    if (data[i] < data[i + gap]) {
+                        cout << "No swap needed " << endl;
+                        break;
+                    } else {
+                        cout << "Swapping data[" << i << "] = " << data[i]
+                             << " with data[" << i + gap << "] = " << data[i + gap] << endl;
+                        T temp = data[i + gap];
+                        data[i + gap] = data[i];
+                        data[i] = temp;
+
+                        cout << "Array after swap: ";
+                        display();
+                        cout << endl;
+                    }
+                }
+            }
+        }
+        cout << "\nSorted Data: ";
+        display();
+    }
 
     void mergeSort(int l, int r) {
         if (l < r) {
@@ -90,51 +117,63 @@ public:
         }
         cout << "Sorted Data: ";
         display();
+        cout << endl;
     }
 
     void count() {
         cout << "Sorting using Count Sort: " << endl;
         if (size <= 1) return;
+
+        // Find the maximum element
         T Max = *max_element(data, data + size);
 
+        // Create auxiliary arrays
         T *aux = new T[Max + 1]();
         T *sorted = new T[size];
 
-        cout << "\n How many times occurred: " << endl;
+        // Count occurrences
+        cout << "\nHow many times each number occurred: " << endl;
         for (int i = 0; i < size; i++) {
             aux[data[i]]++;
-            cout << "iteration " << i << ": -> Aux array [ ";
-            for (int j = 1; j <= Max; j++) {
+            cout << "Iteration " << i << ": -> Aux array [ ";
+            for (int j = 0; j <= Max; j++) {
                 cout << aux[j] << " ";
             }
             cout << "]" << endl;
         }
-        cout << "\n Cumulative sums: " << endl;
-        for (int i = 2; i <= Max; i++) {
-            aux[i] = aux[i] + aux[i - 1];
-            cout << "iteration " << i - 1 << ": -> Aux array [ ";
-            for (int j = 1; j <= Max; j++) {
+
+        // Cumulative sum
+        cout << "\nCumulative sums: " << endl;
+        for (int i = 1; i <= Max; i++) {
+            aux[i] += aux[i - 1];
+            cout << "Iteration " << i << ": -> Aux array [ ";
+            for (int j = 0; j <= Max; j++) {
                 cout << aux[j] << " ";
             }
             cout << "]" << endl;
         }
-        cout << "\n Sorted array: " << endl;
+
+        // Sorting process
+        cout << "\nBuilding the sorted array: " << endl;
         for (int i = size - 1; i >= 0; i--) {
-            sorted[aux[data[i]]] = data[i];
+            sorted[aux[data[i]] - 1] = data[i];
             aux[data[i]]--;
-            cout << "iteration " << size - i << ": [ ";
-            for (int j = 1; j <= size; j++) {
+
+            cout << "Iteration " << size - i << ": [ ";
+            for (int j = 0; j < size; j++) {
                 cout << sorted[j] << " ";
             }
             cout << "]" << endl;
         }
-        delete[] aux;
-        delete[] sorted;
-        cout << "\nSorted Data: [";
-        for (int i = 1; i <= size; i++) {
+
+        cout << "\nSorted Data: [ ";
+        for (int i = 0; i < size; i++) {
             cout << sorted[i] << " ";
         }
-        cout << " ]";
+        cout << "]" << endl;
+
+        delete[] aux;
+        delete[] sorted;
     }
 
     void radix() {
@@ -214,7 +253,7 @@ public:
         T *leftarr = new T[firstSize];
         T *rightarr = new T[secSize];
 
-        cout << "Split array into left and right arrays:" << endl;
+        cout << "\nSplit array into left and right arrays:" << endl;
         cout << "Left array [ ";
         for (int i = 0; i < firstSize; i++) {
             leftarr[i] = data[left + i];
@@ -277,7 +316,7 @@ public:
 
         swap(data[low], data[j]);
 
-        cout << "Pivot: " << pivot << " -> ";
+        cout << "\nPivot: " << pivot << " -> ";
         cout << "[";
         for (int k = 0; k < j; ++k) {
             if (k > 0) cout << ", ";
@@ -341,6 +380,7 @@ public:
                 cout << "Initial data: ";
                 display();
                 cout << endl;
+                measureSortTime(&SortingSystem::shell);
                 break;
             case 5:
                 cout << "Sorting using Merge Sort... " << endl;
@@ -413,14 +453,16 @@ int main() {
         cerr << "Error opening file!" << endl;
         return 1;
     }
+    int count=1;
 
     while (true) {
         int dataSize, type;
         file >> dataSize;
+        cout << "\n\n  TESTCASE " << count << endl << endl;
         cout << "Please enter the data size: " << dataSize << endl;
 
 
-        cout << "Choose the data type: \n 1.Integer \n 2.Float \n 3.String \n 4.Char" << endl;
+        cout << "Choose the data type: \n 1.Integer \n 2.Double \n 3.String \n 4.Char" << endl;
         file >> type;
         cout << "Chosen type: " << type << endl;
         switch (type) {
@@ -436,12 +478,12 @@ int main() {
                 break;
             }
             case 2: {
-                float *arr = new float[dataSize];
+                double *arr = new double[dataSize];
                 for (int i = 0; i < dataSize; i++) {
                     file >> arr[i];
                     cout << "Enter data " << i + 1 << ": " << arr[i] << endl;
                 }
-                SortingSystem<float> data(arr, dataSize);
+                SortingSystem<double> data(arr, dataSize);
                 data.showMenu();
                 delete[] arr;
                 break;
@@ -470,6 +512,7 @@ int main() {
             }
 
         }
+        count++;
         cout << "Do you want to sort another dataset? (y/n):" << endl;
         char option;
         file >> option;
