@@ -1,8 +1,12 @@
 #include <iostream>
 #include <algorithm>
 #include <chrono>
+#include <type_traits>
+#include <fstream>
 
 using namespace std;
+
+ifstream file("testcases.txt");
 
 template<typename T>
 class SortingSystem {
@@ -13,12 +17,15 @@ class SortingSystem {
         mergeSort(0, size - 1);
     }
 
+    void quickSortLinker() {
+        quick(0, size - 1);
+    }
+
     void count(int place) {
-        int aux[10] = {0};  // Counting array for digits 0-9
-        int *sorted = new int[size]();  // Temporary sorted array
-        //fill(sorted, sorted + size, 0);
-        for (int i=0;i<size;i++){
-            sorted[i]=0;
+        int aux[10] = {0};
+        int *sorted = new int[size]();
+        for (int i = 0; i < size; i++) {
+            sorted[i] = 0;
         }
 
         for (int i = 0; i < size; i++) {
@@ -32,13 +39,12 @@ class SortingSystem {
             int digit = (data[i] / place) % 10;
             sorted[aux[digit] - 1] = data[i];
             aux[digit]--;
-            cout << "iteration " << size - i << ": -> Sorted array [ ";
+            cout << "iteration " << size - i << ": [ ";
             for (int j = 1; j <= size; j++) {
                 cout << sorted[j] << " ";
             }
             cout << "]" << endl;
         }
-        // Step 4: Copy sorted array back to original array
         for (int i = 0; i < size; i++) {
             data[i] = sorted[i];
         }
@@ -49,7 +55,7 @@ public:
     SortingSystem(T *arr, int n) : size(n) {
         data = new T[size];
         for (int i = 0; i < size; i++) {
-            data[i] = arr[i]; // Copy array elements
+            data[i] = arr[i];
         }
     }
 
@@ -71,22 +77,28 @@ public:
             mergeSort(l, middle);
             mergeSort(middle + 1, r);
             merge(l, middle, r);
-            cout << "Sorted array after merging: ";
+            cout << "\nSorted Data: ";
             display();
-            cout << endl;
         }
     }
 
-    void quick();
+    void quick(int left, int right) {
+        if (left < right) {
+            int j = partition(left, right);
+            quick(left, j - 1);
+            quick(j + 1, right);
+        }
+        cout << "Sorted Data: ";
+        display();
+    }
 
     void count() {
         cout << "Sorting using Count Sort: " << endl;
         if (size <= 1) return;
         T Max = *max_element(data, data + size);
 
-        // Create auxiliary arrays dynamically
-        T *aux = new T[Max + 1]();   // Initialized to 0
-        T *sorted = new T[size];     // Sorted output array
+        T *aux = new T[Max + 1]();
+        T *sorted = new T[size];
 
         cout << "\n How many times occurred: " << endl;
         for (int i = 0; i < size; i++) {
@@ -110,7 +122,7 @@ public:
         for (int i = size - 1; i >= 0; i--) {
             sorted[aux[data[i]]] = data[i];
             aux[data[i]]--;
-            cout << "iteration " << size - i << ": -> Sorted array [ ";
+            cout << "iteration " << size - i << ": [ ";
             for (int j = 1; j <= size; j++) {
                 cout << sorted[j] << " ";
             }
@@ -118,37 +130,38 @@ public:
         }
         delete[] aux;
         delete[] sorted;
+        cout << "\nSorted Data: [";
+        for (int i = 1; i <= size; i++) {
+            cout << sorted[i] << " ";
+        }
+        cout << " ]";
     }
 
     void radix() {
-// Find the maximum number to determine the number of digits
         int maxNum = *max_element(data, data + size);
 
-        // Perform Counting Sort for each digit place (1s, 10s, 100s, etc.)
         for (int exp = 1; maxNum / exp > 0; exp *= 10) {
             count(exp);
 
-            // Print array after sorting each digit place
-            cout << "After sorting with place " << exp << ": ";
+            cout << "\nAfter sorting with place " << exp << ": ";
             for (int i = 0; i < size; i++) {
                 cout << data[i] << " ";
             }
             cout << endl;
         }
+        cout << "\nSorted Data: ";
+        display();
     }
 
     void bucket() {
-        cout << "Sorting using Bucket Sort: " << endl;
         T Min = *min_element(data, data + size);
         T Max = *max_element(data, data + size);
         T singleBucketRange = (Max - Min) / size + 1;
 
-        // Step 1: Create buckets (array of arrays)
-        T **buckets = new T *[size];  // Array of pointers
-        int *bucketSizes = new int[size](); // Initialize bucket sizes to 0
-        // Allocate memory for each bucket
+        T **buckets = new T *[size];
+        int *bucketSizes = new int[size]();
         for (int i = 0; i < size; i++) {
-            buckets[i] = new T[size];  // Each bucket can hold up to `size` elements
+            buckets[i] = new T[size];
         }
         cout << "\n Distribute items into buckets: " << endl;
         for (int i = 0; i < size; i++) {
@@ -167,7 +180,7 @@ public:
         cout << "Sort buckets: " << endl;
         for (int i = 0; i < size; i++) {
             sort(buckets[i], buckets[i] + bucketSizes[i]); // USE MANUAL SORT
-            cout << "Iteration " << i + 1 << " -> Sorted Bucket " << i + 1 << "[ ";
+            cout << "Iteration " << i + 1 << " -> Sorted Bucket " << i + 1 << " [ ";
             for (int j = 0; j < bucketSizes[i]; j++) {
                 cout << buckets[i][j] << " ";
             }
@@ -178,20 +191,20 @@ public:
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < bucketSizes[i]; j++) {
                 data[newindex++] = buckets[i][j];
-                // Print array status after each merge step
-                cout << "Iteration " << newindex << " -> Array [ ";
+                cout << "Iteration " << newindex << ": [ ";
                 for (int k = 0; k < size; k++) {
                     cout << data[k] << " ";
                 }
                 cout << "]" << endl;
             }
         }
-        // Step 5: Free allocated memory
         for (int i = 0; i < size; i++) {
             delete[] buckets[i];
         }
         delete[] buckets;
         delete[] bucketSizes;
+        cout << "\nSorted Data: ";
+        display();
     }
 
     void merge(int left, int mid, int right) {
@@ -246,12 +259,46 @@ public:
         delete[] rightarr;
     }
 
-    void partition(int low, int high);
+    int partition(int low, int high) {
+        T pivot = data[low];
+        int i = low;
+        int j = high + 1;
+        while (i < j) {
+            do {
+                i++;
+            } while (data[i] <= pivot);
+            do {
+                j--;
+            } while (data[j] > pivot);
+            if (i < j) {
+                swap(data[i], data[j]);
+            }
+        }
+
+        swap(data[low], data[j]);
+
+        cout << "Pivot: " << pivot << " -> ";
+        cout << "[";
+        for (int k = 0; k < j; ++k) {
+            if (k > 0) cout << ", ";
+            cout << data[k];
+        }
+        cout << "] " << data[j] << " [";
+        for (int k = j + 1; k < size; ++k) {
+            if (k > j + 1) cout << ", ";
+            cout << data[k];
+        }
+        cout << "]\n";
+
+        return j;
+    }
 
     void display() {
+        cout << "[ ";
         for (int i = 0; i < size; i++) {
             cout << data[i] << " ";
         }
+        cout << "]";
     }
 
     void measureSortTime(void (SortingSystem::*sortFunc)()) {
@@ -264,135 +311,175 @@ public:
     }
 
     void showMenu() {
+        int choice;
         cout
                 << "\nSorting Algorithm:\n 1. Insertion Sort\n 2. Selection Sort\n 3. Bubble Sort\n 4. Shell Sort\n 5. Merge Sort\n 6. Quick Sort\n 7. Count Sort (Only for integers)\n 8. Radix Sort (Only for integers)\n 9. Bucket Sort "
                 << endl;
-        cout << "Please enter your choice(1-9): " << endl;
-        int choice;
-        cin >> choice;
-        while (choice != 10) {
-            switch (choice) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    measureSortTime(&SortingSystem::mergeSortLinker);
-                    break;
-                case 6:
-                    break;
-                case 7:
+        file >> choice;
+        cout << "Chosen Sorting Algorithm: " << choice << endl;
+        switch (choice) {
+            case 1:
+                cout << "Sorting using Insertion Sort... " << endl;
+                cout << "Initial data: ";
+                display();
+                cout << endl;
+                break;
+            case 2:
+                cout << "Sorting using Selection Sort... " << endl;
+                cout << "Initial data: ";
+                display();
+                cout << endl;
+                break;
+            case 3:
+                cout << "Sorting using Bubble Sort... " << endl;
+                cout << "Initial data: ";
+                display();
+                cout << endl;
+                break;
+            case 4:
+                cout << "Sorting using Shell Sort... " << endl;
+                cout << "Initial data: ";
+                display();
+                cout << endl;
+                break;
+            case 5:
+                cout << "Sorting using Merge Sort... " << endl;
+                cout << "Initial data: ";
+                display();
+                cout << endl;
+                measureSortTime(&SortingSystem::mergeSortLinker);
+                break;
+            case 6:
+                cout << "Sorting using Quick Sort... " << endl;
+                cout << "Initial data: ";
+                display();
+                cout << endl;
+                measureSortTime(&SortingSystem::quickSortLinker);
+                break;
+            case 7:
+                if constexpr (std::is_integral<T>::value) {
+                    cout << "Sorting using Count Sort... " << endl;
+                    cout << "Initial data: ";
+                    display();
+                    cout << endl;
                     measureSortTime(&SortingSystem::count);
-                    break;
-                case 8:
+                } else {
+                    cout << "Count Sort is not available for this type.\n";
+                }
+                break;
+            case 8:
+                if constexpr (std::is_integral<T>::value) {
+                    cout << "Sorting using Radix Sort... " << endl;
+                    cout << "Initial data: ";
+                    display();
+                    cout << endl;
                     measureSortTime(&SortingSystem::radix);
-                    break;
-                case 9:
+
+                } else {
+                    cout << "Radix Sort is not available for this type.\n";
+                }
+
+                break;
+            case 9:
+                if constexpr (std::is_floating_point<T>::value) {
+                    cout << "Sorting using Bucket Sort... " << endl;
+                    cout << "Initial data: ";
+                    display();
+                    cout << endl;
                     measureSortTime(&SortingSystem::bucket);
-                    break;
+                } else if constexpr (std::is_integral<T>::value) {
+                    cout << "Sorting using Bucket Sort... " << endl;
+                    cout << "Initial data: ";
+                    display();
+                    cout << endl;
+                    measureSortTime(&SortingSystem::bucket);
+                } else {
+                    cout << "Bucket Sort is not available for this type.\n";
+                }
 
+                break;
 
-            }
-            cout << "Do you want to sort another dataset? (y/n):" << endl;
-            char option;
-            cin >> option;
-            switch (option) {
-                case 'y':
-                    cout
-                            << "\nSorting Algorithm:\n 1. Insertion Sort\n 2. Selection Sort\n 3. Bubble Sort\n 4. Shell Sort\n 5. Merge Sort\n 6. Quick Sort\n 7. Count Sort (Only for integers)\n 8. Radix Sort (Only for integers)\n 9. Bucket Sort "
-                            << endl;
-                    cout << "Please enter your choice(1-9): " << endl;
-                    cin >> choice;
-                    break;
-                case 'n':
-                    cout << "Thank you for using the sorting system! Goodbye!" << endl;
-                    return;
-
-            }
 
         }
+
+
     }
 };
 
 int main() {
     cout << "\t\t\t\t\t\t\t\t Welcome to Sorting Algorithms program " << endl;
-    cout << "Please enter the data size: " << endl;
-    int dataSize;
-    cin >> dataSize;
-    int *arr = new int[dataSize];
-            for (int i = 0; i < dataSize; i++) {
-                cout << "Enter data " << i + 1 << ": ";
-                cin >> arr[i];
+
+    if (!file) {
+        cerr << "Error opening file!" << endl;
+        return 1;
+    }
+
+    while (true) {
+        int dataSize, type;
+        file >> dataSize;
+        cout << "Please enter the data size: " << dataSize << endl;
+
+
+        cout << "Choose the data type: \n 1.Integer \n 2.Float \n 3.String \n 4.Char" << endl;
+        file >> type;
+        cout << "Chosen type: " << type << endl;
+        switch (type) {
+            case 1: {
+                int *arr = new int[dataSize];
+                for (int i = 0; i < dataSize; i++) {
+                    file >> arr[i];
+                    cout << "Enter data " << i + 1 << ": " << arr[i] << endl;
+                }
+                SortingSystem<int> data(arr, dataSize);
+                data.showMenu();
+                delete[] arr;
+                break;
             }
-            SortingSystem<int> s(arr, dataSize);
-            cout << "Before Sorting: ";
-            s.display();
-            s.showMenu();
-            delete[] arr;
-//    cout << "Choose the data type: \n 1.Integer \n 2.Float \n 3.String \n 4.Char" << endl;
-//    int type;
-//    cin >> type;
-//    switch (type) {
-//        case 1: {
-//            int *arr = new int[dataSize];
-//            for (int i = 0; i < dataSize; i++) {
-//                cout << "Enter data " << i + 1 << ": ";
-//                cin >> arr[i];
-//            }
-//            SortingSystem<int> s(arr, dataSize);
-//            cout << "Before Sorting: ";
-//            s.display();
-//            s.showMenu();
-//            delete[] arr;
-//            break;
-//        }
-//        case 2: {
-//            float *arr = new float[dataSize];
-//            for (int i = 0; i < dataSize; i++) {
-//                cout << "Enter data " << i + 1 << ": ";
-//                cin >> arr[i];
-//            }
-//            SortingSystem<float> s(arr, dataSize);
-//            cout << "Before Sorting: ";
-//            s.display();
-//            s.showMenu();
-//            delete[] arr;
-//            break;
-//        }
-//        case 3: {
-//            string *arr = new string[dataSize];
-//            for (int i = 0; i < dataSize; i++) {
-//                cout << "Enter data " << i + 1 << ": ";
-//                cin >> arr[i];
-//            }
-//            SortingSystem<string> s(arr, dataSize);
-//            cout << "Before Sorting: ";
-//            s.display();
-//            s.showMenu();
-//            delete[] arr;
-//            break;
-//        }
-//        case 4: {
-//            char *arr = new char[dataSize];
-//            for (int i = 0; i < dataSize; i++) {
-//                cout << "Enter data " << i + 1 << ": ";
-//                cin >> arr[i];
-//            }
-//            SortingSystem<char> s(arr, dataSize);
-//            cout << "Before Sorting: ";
-//            s.display();
-//            s.showMenu();
-//            delete[] arr;
-//            break;
-//        }
-//
-//    }
+            case 2: {
+                float *arr = new float[dataSize];
+                for (int i = 0; i < dataSize; i++) {
+                    file >> arr[i];
+                    cout << "Enter data " << i + 1 << ": " << arr[i] << endl;
+                }
+                SortingSystem<float> data(arr, dataSize);
+                data.showMenu();
+                delete[] arr;
+                break;
+            }
+            case 3: {
+                string *arr = new string[dataSize];
+                for (int i = 0; i < dataSize; i++) {
+                    file >> arr[i];
+                    cout << "Enter data " << i + 1 << ": " << arr[i] << endl;
+                }
+                SortingSystem<string> data(arr, dataSize);
+                data.showMenu();
+                delete[] arr;
+                break;
+            }
+            case 4: {
+                char *arr = new char[dataSize];
+                for (int i = 0; i < dataSize; i++) {
+                    file >> arr[i];
+                    cout << "Enter data " << i + 1 << ": " << arr[i] << endl;
+                }
+                SortingSystem<char> data(arr, dataSize);
+                data.showMenu();
+                delete[] arr;
+                break;
+            }
+
+        }
+        cout << "Do you want to sort another dataset? (y/n):" << endl;
+        char option;
+        file >> option;
+        cout << "Chosen Option: " << option << endl;
+        if (option == 'n') {
+            cout << "Thank you for using the sorting system! Goodbye!" << endl;
+            return 0;
+        }
+
+    }
 
 
-
-    return 0;
 }
