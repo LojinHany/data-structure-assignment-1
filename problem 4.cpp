@@ -1,3 +1,6 @@
+// 9 sorts implementation
+// there is attached file containing 9 different testcases in order not to use cin and tak input from user
+
 #include <iostream>
 #include <algorithm>
 #include <chrono>
@@ -63,9 +66,53 @@ public:
         delete[] data;
     }
 
-    void insertion();
+    void insertion() {
+        for(int i=1,j ;i<size; i++){
+            T temp=data[i];
+            cout <<"\n Iteration "<< i << ": Inserting " << temp<<endl;
 
-    void selection();
+            for(j=i; j>0 &&temp<data[j-1];j--){
+                data[j]=data[j-1];
+
+                cout << "After shifting: [ ";
+                for (int k=0; k <size; k++) {
+                    cout <<data[k] << " ";
+                }
+                cout << "]" << endl;
+
+            }
+            data[j] = temp;
+
+            cout << "Array after placing " << temp << " : [ ";
+            for (int k=0;k< size; k++) {
+                cout <<data[k] << " ";
+            }
+            cout << "]" << endl;
+        }
+        cout << "\nSorted Data: ";
+        display();
+    }
+
+    void selection() {
+        for(int i=0; i<size-1; i++){
+            cout << "\nIteration " << i + 1 << ": Finding the smallest element from index " << i << " to " << size - 1 << endl;
+            int least=i;
+            for(int j=i+1; j<size; j++){
+                cout << "Comparing data[" << j << "] = " << data[j] << " with data[" << least << "] = " << data[least] << endl;
+                if (data[j] < data[least]) {
+                    least = j;
+                    cout << "Minimum found at index " << least << " (value: " << data[least] << ")" << endl;
+                }
+            }
+            cout << "Swapping data[" << i << "] = " << data[i] << " with data[" << least << "] = " << data[least] << endl;
+            T temp=data[i];
+            data[i]=data[least];
+            data[least]=temp;
+        }
+        cout << "\nSorted Data: ";
+        display();
+
+    }
 
     void bubble();
 
@@ -362,12 +409,14 @@ public:
                 cout << "Initial data: ";
                 display();
                 cout << endl;
+                measureSortTime(&SortingSystem::insertion);
                 break;
             case 2:
                 cout << "Sorting using Selection Sort... " << endl;
                 cout << "Initial data: ";
                 display();
                 cout << endl;
+                measureSortTime(&SortingSystem::selection);
                 break;
             case 3:
                 cout << "Sorting using Bubble Sort... " << endl;
@@ -453,7 +502,7 @@ int main() {
         cerr << "Error opening file!" << endl;
         return 1;
     }
-    int count=1;
+    int count=1; // counter to print the testcase number based on the attached file
 
     while (true) {
         int dataSize, type;
