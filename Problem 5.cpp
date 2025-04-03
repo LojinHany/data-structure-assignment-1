@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 template<typename T>
@@ -36,18 +37,24 @@ public:
 
     ~StatisticalCalculation(){delete[] data;}
 
-    void inputData(){
-        cout << "Enter the number of elements: ";
-        cin >> size;
-        data = new  T[size];
-        for (int i = 0; i < size; i++) {
-            cout << "Enter element " << i+1 << ":" << endl;
-            cin >> data[i];
+    void inputData() {
+        ifstream inputFile("C:/Users/Nour/CLionProjects/Assignment_1_DataStructures/input.txt");
+        if (!inputFile) {
+            cout << "Error: Could not open file 'input.txt'!" << endl;
+            return;
         }
+
+        inputFile >> size;
+        data = new T[size];
+        for (int i = 0; i < size; i++) {
+            inputFile >> data[i];
+        }
+
+        inputFile.close();
     }
 
     void sort(){
-        QuickSort(data,0,size + 2);
+        QuickSort(data,0,size);
     }
 
     void displayArray() {
@@ -61,11 +68,10 @@ public:
 
     T findMedian() {
         sort();
-        if (size % 2 == 0){
-            return data[(size-1)/2] + data[(size+1)/2] / 2;
-        }
-        else{
-            return  data[size / 2] ;
+        if (size % 2 == 0) {
+            return (data[size / 2 - 1] + data[size / 2]) / 2.0;
+        } else {
+            return data[size / 2];
         }
     }
 
