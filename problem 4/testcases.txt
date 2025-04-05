@@ -1,13 +1,13 @@
-9
-3
-Nablus Gaza Al-Khalil Ramallah Ariha Jenin Tolkarem Al-Quds Yafa
-5
-y
-
 5
 1
 11 100 2 1 5
 8
+y
+
+5
+3
+eat travel drink work sleep
+2
 y
 
 4
@@ -34,10 +34,10 @@ y
 7
 y
 
-5
+9
 3
-eat travel drink work sleep
-2
+Nablus Gaza Al-Khalil Ramallah Ariha Jenin Tolkarem Al-Quds Yafa
+5
 y
 
 7
