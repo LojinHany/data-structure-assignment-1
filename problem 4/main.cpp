@@ -311,7 +311,17 @@ public:
         }
         cout << "Sort buckets: " << endl;
         for (int i = 0; i < size; i++) {
-            sort(buckets[i], buckets[i] + bucketSizes[i]); // USE MANUAL SORT
+
+            // Insertion Sort for each bucket
+            for (int j = 1; j < bucketSizes[i]; j++) {
+                T key = buckets[i][j];
+                int k = j - 1;
+                while (k >= 0 && buckets[i][k] > key) {
+                    buckets[i][k + 1] = buckets[i][k];
+                    k--;
+                }
+                buckets[i][k + 1] = key;
+            }
             cout << "Iteration " << i + 1 << " -> Sorted Bucket " << i + 1 << " [ ";
             for (int j = 0; j < bucketSizes[i]; j++) {
                 cout << buckets[i][j] << " ";
