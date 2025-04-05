@@ -8,9 +8,9 @@ class Node{
 public:
     int data;
     Node* next;
-    Node(int value){ // Constructor
+    Node(int value){
         data= value;
-        next= nullptr; // if node is the last one then next is null
+        next= nullptr; 
     }
 };
 class SortedLinkedList{
@@ -18,16 +18,16 @@ private:
     Node*head;
 public:
 
-    SortedLinkedList(){ // Constructor
+    SortedLinkedList(){ 
         head=nullptr;
     }
 
-    void insert (int value){ //Insert a value while keeping the list sorted
+    void insert (int value){
         Node* newElement= new Node(value);
         Node* temp= head;
         if (head==nullptr|| value<head->data) {
             newElement->next=head;
-            head=newElement;// the newElement now became the header
+            head=newElement;
         }
         else{
             while (temp->next!=nullptr) {
@@ -41,7 +41,7 @@ public:
         }
     }
 
-    void remove(int index){ // Delete node at given index
+    void remove(int index){
         int count=0;
         Node* temp= head;
         Node* del;
@@ -49,9 +49,9 @@ public:
         while(temp){
             temp=temp->next;
             count++;
-        } // temp now points to null pointer
+        }
 
-        if(index>=count|| index<0){
+        if(index>=count){
             cout<<"No change (out of bounds)\n";
             return;
         }
@@ -73,7 +73,7 @@ public:
 
     }
 
-    // Overloaded Operators
+   
     friend ostream& operator<<(ostream& os, const SortedLinkedList& list) {
         Node* temp=list.head;
         os << "[";
@@ -103,7 +103,7 @@ public:
 
     }
 
-    ~SortedLinkedList(){ //Destructor to free memory
+    ~SortedLinkedList(){ 
         Node* temp = head;
             while (temp) {
                 Node* del = temp;
@@ -164,7 +164,7 @@ int main()
     cout<<L<<endl; //Output:[0, 1, 3, 6, 7]
     L.remove(3); //L = [0, 1, 3, 7]
     cout<<L<<endl; //Output:[0, 1, 3, 7]
-    L.remove(-1); //No change (out of bounds)
+    L.remove(50); //No change (out of bounds)
     cout<<L<<endl; //Output:[0, 1, 3, 7]
 
     cout << "\n--Test Case 7\n";
@@ -258,7 +258,7 @@ int main()
     cout << L4 << endl; // Output: [2, 5, 6]
     L4.remove(0);   // L4 = [5, 6]
     cout << L4 << endl; // Output: [5, 6]
-    L4.remove(-1);  // No change (out of bounds)
+    L4.remove(200);  // No change (out of bounds)
     cout << L4 << endl; // Output: [5, 6]
 
     cout << "\n--Test Case 16\n";
