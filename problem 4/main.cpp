@@ -163,33 +163,35 @@ public:
     }
 
     void shell() {
-        for (int gap = size / 2; gap >= 1; gap /= 2) {
-            cout << "\nCurrent gap: " << gap << endl;
-            for (int j = gap; j < size; j++) {
-                for (int i = j - gap; i >= 0; i -= gap) {
-                    cout << "Comparing data[" << i << "] = " << data[i]
-                         << " and data[" << i + gap << "] = " << data[i + gap] << endl;
+        int count=1;
+        for (int i = size / 2; i > 0; i /= 2) {
+            cout << "\nIteration: " << count << endl;
+            for (int k = i; k < size; k++) {
+                T temp = data[k];
+                int j = k;
 
-                    if (data[i] < data[i + gap]) {
-                        cout << "No swap needed " << endl;
-                        break;
-                    } else {
-                        cout << "Swapping data[" << i << "] = " << data[i]
-                             << " with data[" << i + gap << "] = " << data[i + gap] << endl;
-                        T temp = data[i + gap];
-                        data[i + gap] = data[i];
-                        data[i] = temp;
-
-                        cout << "Array after swap: ";
-                        display();
-                        cout << endl;
-                    }
+                // Perform shifting instead of swapping
+                while (j >= i && temp < data[j - i]) {
+                    cout << "Shifting data[" << j - i << "] = " << data[j - i]
+                         << " to position " << j << endl;
+                    data[j] = data[j - i];
+                    j -= i;
                 }
+
+                data[j] = temp;
+                cout << "Inserted temp = " << temp << " at position " << j << endl;
+
+                cout << "Array after insertion: ";
+                display();
+                cout << endl;
             }
+            count++;
         }
+
         cout << "\nSorted Data: ";
         display();
     }
+
 
     void mergeSort(int l, int r) {
         if (l < r) {
