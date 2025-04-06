@@ -56,7 +56,7 @@ public:
             return;
         }
         int type;
-        cout << "Choose the data type: \n 1.Integer \n 2.Double" << endl;
+        cout << "Choose the data type: \n 1.Integer \n 2.Double \n 3.Float" << endl;
         inputFile >> type;
         cout << "Chosen type: " << type << endl;
 
