@@ -1,5 +1,5 @@
-// 9 sorts implementation
-// there is attached file containing 9 different testcases in order not to use cin and tak input from user
+// 9 Sorts Implementations
+// There is an attached file containing 9 different testcases in order not to use cin or take input from user
 
 #include <iostream>
 #include <algorithm>
@@ -17,11 +17,11 @@ class SortingSystem {
     T *data;
     int size;
 
-    // function to check whether to use attached file or enter data manually
+    // Function to check whether to use attached file or enter data manually
     int chooseAlgorithm(int choice) {
         cout
-                << "\nSorting Algorithm:\n 1. Insertion Sort\n 2. Selection Sort\n 3. Bubble Sort\n 4. Shell Sort\n 5. Merge Sort\n 6. Quick Sort\n 7. Count Sort (Only for integers)\n 8. Radix Sort (Only for integers)\n 9. Bucket Sort "
-                << endl;
+        << "\nSorting Algorithm:\n 1. Insertion Sort\n 2. Selection Sort\n 3. Bubble Sort\n 4. Shell Sort\n 5. Merge Sort\n 6. Quick Sort\n 7. Count Sort (Only for integers)\n 8. Radix Sort (Only for integers)\n 9. Bucket Sort "
+        << endl;
         if (decision == 1) {
             file >> choice;
             cout << "Chosen Sorting Algorithm: " << choice << endl;
@@ -38,10 +38,12 @@ class SortingSystem {
     }
 
     void quickSortLinker() {
-        quick(0, size - 1);
+        quickSort(0, size - 1);
+        cout<<"\nSorted Data: ";
+        displayData();
     }
 
-    void count(int place) {
+    void countSort(int place) {
         int aux[10] = {0};
         int *sorted = new int[size]();
         for (int i = 0; i < size; i++) {
@@ -83,10 +85,10 @@ public:
         delete[] data;
     }
 
-    void insertion() {
+    void insertionSort() {
         for (int i = 1, j; i < size; i++) {
             T temp = data[i];
-            cout << "\n Iteration " << i << ": Inserting " << temp << endl;
+            cout << "\nIteration " << i << ": Inserting " << temp << endl;
 
             for (j = i; j > 0 && temp < data[j - 1]; j--) {
                 data[j] = data[j - 1];
@@ -107,12 +109,12 @@ public:
             cout << "]" << endl;
         }
         cout << "\nSorted Data: ";
-        display();
+        displayData();
     }
 
-    void selection() {
+    void selectionSort() {
         for (int i = 0; i < size - 1; i++) {
-            cout << "\nIteration " << i + 1 << ": Finding the smallest element from index " << i << " to " << size - 1
+            cout << "\nIteration " << i + 1 << ": Finding the smallest element from index " << i << " to " << size-1
                  << endl;
             int least = i;
             for (int j = i + 1; j < size; j++) {
@@ -130,16 +132,16 @@ public:
             data[least] = temp;
         }
         cout << "\nSorted Data: ";
-        display();
+        displayData();
 
     }
 
-    void bubble() {
+    void bubbleSort() {
         for (int i = 0; i < size - 1; i++) {
             bool swapped = false;
             cout << "\nIteration " << i + 1 << ": \n";
             for (int j = 0; j < size - i - 1; j++) {
-                cout << "  Comparing " << data[j] << " and " << data[j + 1];
+                cout << "  Comparing data["<<j<<"]= "<< data[j] << " and data[" <<j+1<<"]= "<< data[j + 1];
                 if (data[j] > data[j + 1]) {
                     T temp = data[j];
                     data[j] = data[j + 1];
@@ -151,7 +153,7 @@ public:
                 }
             }
             cout << "  After iteration " << i + 1 << ": ";
-            display();
+            displayData();
             cout << endl;
             if (!swapped) {
                 cout << "  No swaps in this iteration. Array is sorted early.\n";
@@ -159,18 +161,18 @@ public:
             }
         }
         cout << "\nSorted Data: ";
-        display();
+        displayData();
     }
 
-    void shell() {
+    void shellSort() {
         int count=1;
         for (int i = size / 2; i > 0; i /= 2) {
-            cout << "\nIteration: " << count << endl;
+            cout << "\nIteration: " << count <<" Gap= "<<i<< endl;
             for (int k = i; k < size; k++) {
                 T temp = data[k];
                 int j = k;
 
-                // Perform shifting instead of swapping
+                cout << "\nComparing and inserting data[" << k << "] = " << temp << endl;
                 while (j >= i && temp < data[j - i]) {
                     cout << "Shifting data[" << j - i << "] = " << data[j - i]
                          << " to position " << j << endl;
@@ -182,51 +184,50 @@ public:
                 cout << "Inserted temp = " << temp << " at position " << j << endl;
 
                 cout << "Array after insertion: ";
-                display();
+                displayData();
                 cout << endl;
             }
             count++;
         }
 
         cout << "\nSorted Data: ";
-        display();
+        displayData();
     }
 
 
-    void mergeSort(int l, int r) {
-        if (l < r) {
-            int middle = l + (r - l) / 2;
-            mergeSort(l, middle);
-            mergeSort(middle + 1, r);
-            merge(l, middle, r);
+    void mergeSort(int left, int right) {
+        if (left >= right) {
+            return;
+        } else {
+            int middle = (right + left) / 2;
+            mergeSort(left, middle);
+            mergeSort(middle + 1, right);
+            merge(left, middle, right);
             cout << "\nSorted Data: ";
-            display();
+            displayData();
         }
     }
 
-    void quick(int left, int right) {
+    void quickSort(int left, int right) {
         if (left < right) {
             int j = partition(left, right);
-            quick(left, j - 1);
-            quick(j + 1, right);
+            quickSort(left, j - 1);
+            quickSort(j + 1, right);
         }
         cout << "Sorted Data: ";
-        display();
+        displayData();
         cout << endl;
     }
 
-    void count() {
+    void countSort() {
         cout << "Sorting using Count Sort: " << endl;
         if (size <= 1) return;
 
-        // Find the maximum element
         T Max = *max_element(data, data + size);
 
-        // Create auxiliary arrays
         T *aux = new T[Max + 1]();
-        T *sorted = new T[size];
+        T *sorted = new T[size]();
 
-        // Count occurrences
         cout << "\nHow many times each number occurred: " << endl;
         for (int i = 0; i < size; i++) {
             aux[data[i]]++;
@@ -237,7 +238,6 @@ public:
             cout << "]" << endl;
         }
 
-        // Cumulative sum
         cout << "\nCumulative sums: " << endl;
         for (int i = 1; i <= Max; i++) {
             aux[i] += aux[i - 1];
@@ -248,7 +248,6 @@ public:
             cout << "]" << endl;
         }
 
-        // Sorting process
         cout << "\nBuilding the sorted array: " << endl;
         for (int i = size - 1; i >= 0; i--) {
             sorted[aux[data[i]] - 1] = data[i];
@@ -271,11 +270,11 @@ public:
         delete[] sorted;
     }
 
-    void radix() {
+    void radixSort() {
         int maxNum = *max_element(data, data + size);
 
         for (int exp = 1; maxNum / exp > 0; exp *= 10) {
-            count(exp);
+            countSort(exp);
 
             cout << "\nAfter sorting with place " << exp << ": ";
             for (int i = 0; i < size; i++) {
@@ -284,10 +283,10 @@ public:
             cout << endl;
         }
         cout << "\nSorted Data: ";
-        display();
+        displayData();
     }
 
-    void bucket() {
+    void bucketSort() {
         T Min = *min_element(data, data + size);
         T Max = *max_element(data, data + size);
         T singleBucketRange = (Max - Min) / size + 1;
@@ -348,7 +347,7 @@ public:
         delete[] buckets;
         delete[] bucketSizes;
         cout << "\nSorted Data: ";
-        display();
+        displayData();
     }
 
     void merge(int left, int mid, int right) {
@@ -372,72 +371,81 @@ public:
         }
         cout << "]" << endl;
 
-        int i = 0, j = 0, k = left;
+        int i = 0, j = 0;
+        int k = left;
+        int iter = 1;  // Tracks merge steps, starting from 1
+
         while (i < firstSize && j < secSize) {
-            if (leftarr[i] <= rightarr[j]) {
-                data[k] = leftarr[i++];
+            if (leftarr[i] < rightarr[j]) {
+                data[k++] = leftarr[i++];
             } else {
-                data[k] = rightarr[j++];
+                data[k++] = rightarr[j++];
             }
-            cout << "Iteration " << k - left + 1 << " -> data: ";
-            display();
+            cout << "Iteration " << iter++ << " -> data: ";
+            displayData();
             cout << endl;
-            k++;
         }
 
         while (i < firstSize) {
-            data[k] = leftarr[i++];
-            cout << "Iteration " << k - left + 1 << " -> data: ";
-            display();
+            data[k++] = leftarr[i++];
+            cout << "Iteration " << iter++ << " -> data: ";
+            displayData();
             cout << endl;
-            k++;
         }
+
         while (j < secSize) {
-            data[k] = rightarr[j++];
-            cout << "Iteration " << k - left + 1 << " -> data: ";
-            display();
+            data[k++] = rightarr[j++];
+            cout << "Iteration " << iter++ << " -> data: ";
+            displayData();
             cout << endl;
-            k++;
         }
+
         delete[] leftarr;
         delete[] rightarr;
     }
 
     int partition(int low, int high) {
-        T pivot = data[(low + high) / 2];
+        T x = data[low];
         int i = low;
-        int j = high + 1;
-        while (i < j) {
-            do {
+        T left[high - low + 1], right[high - low + 1];
+        int leftCount = 0, rightCount = 0;
+
+        for (int j = low + 1; j <= high; ++j) {
+            if (data[j] < x) {
                 i++;
-            } while (data[i] <= pivot);
-            do {
-                j--;
-            } while (data[j] > pivot);
-            if (i < j) {
-                swap(data[i], data[j]);
+                T temp = data[i];
+                data[i] = data[j];
+                data[j] = temp;
             }
         }
 
-        swap(data[low], data[j]);
+        T temp = data[i];
+        data[i] = data[low];
+        data[low] = temp;
 
-        cout << "\nPivot: " << pivot << " -> ";
-        cout << "[";
-        for (int k = 0; k < j; ++k) {
-            if (k > 0) cout << ", ";
-            cout << data[k];
+        for (int k = low; k < i; ++k) {
+            left[leftCount++] = data[k];
         }
-        cout << "] " << data[j] << " [";
-        for (int k = j + 1; k < size; ++k) {
-            if (k > j + 1) cout << ", ";
-            cout << data[k];
+        for (int k = i + 1; k <= high; ++k) {
+            right[rightCount++] = data[k];
         }
-        cout << "]\n";
 
-        return j;
+        cout << "Pivot: " << x << " -> [";
+        for (int k = 0; k < leftCount; ++k) {
+            cout << left[k];
+            if (k < leftCount - 1) cout << ", ";
+        }
+        cout << "] " << data[i] << " [";
+        for (int k = 0; k < rightCount; ++k) {
+            cout << right[k];
+            if (k < rightCount - 1) cout << ", ";
+        }
+        cout << "]" << endl;
+
+        return i;
     }
 
-    void display() {
+    void displayData() {
         cout << "[ ";
         for (int i = 0; i < size; i++) {
             cout << data[i] << " ";
@@ -460,42 +468,42 @@ public:
             case 1:
                 cout << "Sorting using Insertion Sort... " << endl;
                 cout << "Initial data: ";
-                display();
+                displayData();
                 cout << endl;
-                measureSortTime(&SortingSystem::insertion);
+                measureSortTime(&SortingSystem::insertionSort);
                 break;
             case 2:
                 cout << "Sorting using Selection Sort... " << endl;
                 cout << "Initial data: ";
-                display();
+                displayData();
                 cout << endl;
-                measureSortTime(&SortingSystem::selection);
+                measureSortTime(&SortingSystem::selectionSort);
                 break;
             case 3:
                 cout << "Sorting using Bubble Sort... " << endl;
                 cout << "Initial data: ";
-                display();
+                displayData();
                 cout << endl;
-                measureSortTime(&SortingSystem::bubble);
+                measureSortTime(&SortingSystem::bubbleSort);
                 break;
             case 4:
                 cout << "Sorting using Shell Sort... " << endl;
                 cout << "Initial data: ";
-                display();
+                displayData();
                 cout << endl;
-                measureSortTime(&SortingSystem::shell);
+                measureSortTime(&SortingSystem::shellSort);
                 break;
             case 5:
                 cout << "Sorting using Merge Sort... " << endl;
                 cout << "Initial data: ";
-                display();
+                displayData();
                 cout << endl;
                 measureSortTime(&SortingSystem::mergeSortLinker);
                 break;
             case 6:
                 cout << "Sorting using Quick Sort... " << endl;
                 cout << "Initial data: ";
-                display();
+                displayData();
                 cout << endl;
                 measureSortTime(&SortingSystem::quickSortLinker);
                 break;
@@ -503,9 +511,9 @@ public:
                 if constexpr (is_integral<T>::value) {
                     cout << "Sorting using Count Sort... " << endl;
                     cout << "Initial data: ";
-                    display();
+                    displayData();
                     cout << endl;
-                    measureSortTime(&SortingSystem::count);
+                    measureSortTime(&SortingSystem::countSort);
                 } else {
                     cout << "Count Sort is not available for this type.\n";
                 }
@@ -514,9 +522,9 @@ public:
                 if constexpr (is_integral<T>::value) {
                     cout << "Sorting using Radix Sort... " << endl;
                     cout << "Initial data: ";
-                    display();
+                    displayData();
                     cout << endl;
-                    measureSortTime(&SortingSystem::radix);
+                    measureSortTime(&SortingSystem::radixSort);
 
                 } else {
                     cout << "Radix Sort is not available for this type.\n";
@@ -527,15 +535,15 @@ public:
                 if constexpr (is_floating_point<T>::value) {
                     cout << "Sorting using Bucket Sort... " << endl;
                     cout << "Initial data: ";
-                    display();
+                    displayData();
                     cout << endl;
-                    measureSortTime(&SortingSystem::bucket);
+                    measureSortTime(&SortingSystem::bucketSort);
                 } else if constexpr (is_integral<T>::value) {
                     cout << "Sorting using Bucket Sort... " << endl;
                     cout << "Initial data: ";
-                    display();
+                    displayData();
                     cout << endl;
-                    measureSortTime(&SortingSystem::bucket);
+                    measureSortTime(&SortingSystem::bucketSort);
                 } else {
                     cout << "Bucket Sort is not available for this type.\n";
                 }
@@ -633,7 +641,7 @@ int main() {
 
 
     }
-        // enter data manually
+    // Enter Data Manually
     else {
         while (true) {
             int dataSize, type;
