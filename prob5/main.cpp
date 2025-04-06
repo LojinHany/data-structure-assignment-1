@@ -22,10 +22,16 @@ private:
         while (i < j) {
             do { i++; } while (arr[i] <= pivot);
             do { j--; } while (arr[j] > pivot);
-            if (i < j) swap(arr[i], arr[j]);
-
+            if (i < j) {
+                T temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
         }
-        swap(arr[low], arr[j]);
+        T temp = arr[low];
+        arr[low] = arr[j];
+        arr[j] = temp;
+
         return j;
     }
 
@@ -50,7 +56,7 @@ public:
             return;
         }
         int type;
-        cout << "Choose the data type: \n 1.Integer \n 2.Double \n 3.String \n 4.Char" << endl;
+        cout << "Choose the data type: \n 1.Integer \n 2.Double" << endl;
         inputFile >> type;
         cout << "Chosen type: " << type << endl;
 
