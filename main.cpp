@@ -43,7 +43,7 @@ class SortingSystem {
         displayData();
     }
 
-    void count(int place) {
+    void countSort(int place) {
         int aux[10] = {0};
         int *sorted = new int[size]();
         for (int i = 0; i < size; i++) {
@@ -226,7 +226,7 @@ public:
         T Max = *max_element(data, data + size);
 
         T *aux = new T[Max + 1]();
-        T *sorted = new T[size];
+        T *sorted = new T[size]();
 
         cout << "\nHow many times each number occurred: " << endl;
         for (int i = 0; i < size; i++) {
@@ -274,7 +274,7 @@ public:
         int maxNum = *max_element(data, data + size);
 
         for (int exp = 1; maxNum / exp > 0; exp *= 10) {
-            count(exp);
+            countSort(exp);
 
             cout << "\nAfter sorting with place " << exp << ": ";
             for (int i = 0; i < size; i++) {
