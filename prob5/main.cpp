@@ -55,11 +55,6 @@ public:
             cout << "Error: Could not open file 'input.txt'!" << endl;
             return;
         }
-        int type;
-        cout << "Choose the data type: \n 1.Integer \n 2.Double \n 3.Float" << endl;
-        inputFile >> type;
-        cout << "Chosen type: " << type << endl;
-
         inputFile >> size;
         cout << "\nChosen size: " << size << endl << endl;
         data = new T[size];
